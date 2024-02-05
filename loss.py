@@ -5,6 +5,9 @@ class Loss(ABC):
 	@abstractmethod
 	def forward(self):
 		pass
+	
+	def backward(self):
+		pass
 
 	def calculate(self, output, y):
 		sample_losses = self.forward(output, y)
@@ -28,3 +31,13 @@ class Loss_CategoricalCrossEntropy(Loss):
 		# ici on fout au -logarithme (naturel !! base E) les resultat. Ca permet de pouvoir revenir au resultat en 
 		# mettant en exponentiel le logarithme. (pratique pour la backpropagation et l'optimisation)
 		return negative_log_likelihoods
+	def backward(self, dvalues, y_true):
+		samples = len(dvalues)
+		labels = len(dvalues[0])
+
+		if (len(y_true.shape) == 1):
+			y_true = np.eye(labels)[y_true]
+		
+		self.dinputs = -y_true / dvalues
+		self.dinputs = self.dinputs / samples
+	

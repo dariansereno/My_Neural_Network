@@ -3,7 +3,7 @@ import numpy as np
 
 class Layer(ABC):
 	def __init__(self, n_inputs, n_neurons):
-		self.weigths = 0.10 * np.random.randn(n_inputs, n_neurons)
+		self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)
 		self.biases = np.zeros((1, n_neurons))
 
 		# exemple : On a 2 inputs, et 3 neurones : weights : [[2.1, 0.3, 0.56], [1.32, 0.56, 3.21]], biais : [0.32, 0.67, 1.56]
@@ -11,9 +11,17 @@ class Layer(ABC):
 	@abstractmethod
 	def forward(self):
 		pass
+	@abstractmethod
+	def backward(self):
+		pass
 
 class Layer_Dense(Layer):
 	def __init__(self, n_inputs, n_neurons):
 		super().__init__(n_inputs, n_neurons)
 	def forward(self, inputs):
-		self.output = np.dot(inputs, self.weigths) + self.biases	
+		self.output = np.dot(inputs, self.weights) + self.biases
+		self.input = inputs
+	def backward(self, dvalues):
+		self.dweights = np.dot(self.input.T, dvalues)
+		self.dinputs = np.dot(dvalues, self.weights.T)
+		self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
