@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from layer import Layer
 
 class Optimizer(ABC):
 	def __init__(self, learning_rate=1.0, decay=.0, momentum=.0):
@@ -13,7 +14,7 @@ class Optimizer(ABC):
 		pass
 
 	@abstractmethod
-	def update_params(self):
+	def update_params(self, layer: Layer):
 		pass
 
 	@abstractmethod

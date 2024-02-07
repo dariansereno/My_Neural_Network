@@ -2,11 +2,13 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 class Loss(ABC):
+	dinputs: np.ndarray
+
 	@abstractmethod
-	def forward(self):
+	def forward(self, y_pred, y_true):
 		pass
 	
-	def backward(self):
+	def backward(self, dvalues, y_true):
 		pass
 
 	def calculate(self, output, y):
@@ -28,7 +30,7 @@ class Loss_CategoricalCrossEntropy(Loss):
 			correct_confidences = np.sum(y_pred_clipped * y_true, axis=1)
 		
 		negative_log_likelihoods = -np.log(correct_confidences)
-		# ici on fout au -logarithme (naturel !! base E) les resultat. Ca permet de pouvoir revenir au resultat en 
+		# ici on met au -logarithme (naturel !! base E) les resultat. Ca permet de pouvoir revenir au resultat en 
 		# mettant en exponentiel le logarithme. (pratique pour la backpropagation et l'optimisation)
 		return negative_log_likelihoods
 	def backward(self, dvalues, y_true):

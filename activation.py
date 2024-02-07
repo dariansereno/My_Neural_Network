@@ -3,10 +3,16 @@ from loss import Loss_CategoricalCrossEntropy
 import numpy as np
 
 class Activation(ABC):
+	inputs: np.ndarray
+	output: np.ndarray
+	dinputs: np.ndarray
+
 	@abstractmethod
-	def forward(self):
+	def forward(self, inputs):
 		pass
-	def backward(self):
+
+	@abstractmethod
+	def backward(self, dvalues):
 		pass
 
 class Activation_ReLU(Activation):

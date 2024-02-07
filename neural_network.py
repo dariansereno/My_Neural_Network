@@ -1,75 +1,107 @@
+from layer import Layer
+from activation import Activation
+from loss import Loss
+from optimizer import Optimizer, Optimizer_SGD
 import numpy as np
-from layer import Layer_Dense
-from activation import Activation_ReLU, Activation_Softmax, Activation_Softmax_Loss_CategoricalCrossEntropy
-from loss import Loss_CategoricalCrossEntropy
-from optimizer import Optimizer_SGD
 import matplotlib.pyplot as plt
-from spiral_data import spiral_data
 
-#np.random.seed(1)
+class NeuralNetwork:
 
-X, y = spiral_data(100, 3)
+	def __init__(self, loss: Loss, epochs=1001, optimizer= Optimizer_SGD()):
+		self.optimizer: Optimizer = optimizer
+		self.loss: Loss = loss
+		self.n_layer = 0
+		self.epochs = epochs
+		self.layers = []
+		self.activations = []
+		self.accuracies = []
+		self.losses = []
+	
+	def add_layer(self, layer: Layer, activation: Activation):
+		self.n_layer += 1
+		self.layers.append(layer)
+		self.activations.append(activation)
+	
+	def train(self, X, Y, display=False, plot=False):
+		self.accuracies.clear()
+		self.losses.clear()
 
-dense1 = Layer_Dense(2, 64)
-dense2 = Layer_Dense(64, 3)
-#dense3 = Layer_Dense(64, 3)
+		for _ in range(self.epochs):
+			layer: Layer
+			activation: Activation
+			feed = X.copy()
 
-activation1 = Activation_ReLU()
-#activation2 = Activation_ReLU()
-loss_activation = Activation_Softmax_Loss_CategoricalCrossEntropy()
+			# forward
+			for (layer, activation) in zip(self.layers, self.activations):
+				layer.forward(feed)
+				feed = layer.output
+				activation.forward(feed)
+				feed = activation.output
 
-optimizer = Optimizer_SGD(decay=1e-3, momentum=0.9)
+			predictions = (feed > 0.5) * 1
+			accuracy = np.mean(predictions==Y)
 
-epochs = []
-losses = []
-accuracies = []
+			loss = self.loss.calculate(feed, Y)
+			self.loss.backward(feed, Y)
+			feed = self.loss.dinputs
 
-for epoch in range(10001):
-	dense1.forward(X)
-	activation1.forward(dense1.output)
-	dense2.forward(activation1.output)
-	loss = loss_activation.forward(dense2.output, y)
-	#dense3.forward(activation2.output)
-	#loss = loss_activation.forward(dense3.output, y)
+			self.losses.append(loss)
+			self.accuracies.append(accuracy)
+			if (display):
+				if not _ % 100:
+					print(f'epoch: {_}, ' + f'acc: {accuracy:.3f}, ' + f'loss: {loss:.3f}, ' + f'lr: {self.optimizer.current_learning_rate}')
+			
+			# backward
+			for (layer, activation) in zip(reversed(self.layers), reversed(self.activations)):
+				activation.backward(feed)
+				feed = activation.dinputs
+				layer.backward(feed)
+				feed = layer.dinputs
+		
+			# update
+			self.optimizer.pre_update_params()
+			for layer in self.layers:
+				self.optimizer.update_params(layer)
+			self.optimizer.post_update_params()
 
-	prediction = np.argmax(loss_activation.output, axis=1)
-	accuracy = np.mean(prediction==y)
-	if not epoch % 100:
-		print(f'epoch: {epoch}, ' + f'acc: {accuracy:.3f}, ' + f'loss: {loss:.3f}, ' + f'lr: {optimizer.current_learning_rate}')
+		if (plot):
+			self.plot()
 
-	loss_activation.backward(loss_activation.output, y)
-	#dense3.backward(loss_activation.dinputs)
-	#activation2.backward(dense3.dinputs)
-	dense2.backward(loss_activation.dinputs)
-	activation1.backward(dense2.dinputs)
-	dense1.backward(activation1.dinputs)
+	def predict(self, X):
+		feed = X.copy()
 
-	epochs.append(epoch)
-	losses.append(loss)
-	accuracies.append(accuracy)
+		layer: Layer
+		activation: Activation
+		for (layer, activation) in zip(self.layers, self.activations):
+			layer.forward(feed)
+			feed =layer.output
+			activation.forward(feed)
+			feed = activation.output
+		return  (feed > 0.5)
+	
+	def plot(self):
+		plt.figure(figsize=(12, 4))
 
-	optimizer.pre_update_params()
-	optimizer.update_params(dense1)
-	optimizer.update_params(dense2)
-	optimizer.post_update_params()
+		# loss
+		plt.subplot(1, 2, 1)
+		plt.plot(range(self.epochs), self.losses, label='Loss')
+		plt.title('Training Loss')
+		plt.xlabel('Epochs')
+		plt.ylabel('Loss')
+		plt.legend()
 
-plt.figure(figsize=(12, 4))
+		# accuracy
+		plt.subplot(1, 2, 2)
+		plt.plot(range(self.epochs), self.accuracies, label='Accuracy', color='orange')
+		plt.title('Training Accuracy')
+		plt.xlabel('Epochs')
+		plt.ylabel('Accuracy')
+		plt.legend()
 
-# Plot Loss
-plt.subplot(1, 2, 1)
-plt.plot(epochs, losses, label='Loss')
-plt.title('Training Loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
+		plt.tight_layout()
+		plt.show()
 
-# Plot Accuracy
-plt.subplot(1, 2, 2)
-plt.plot(epochs, accuracies, label='Accuracy', color='orange')
-plt.title('Training Accuracy')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy')
-plt.legend()
 
-plt.tight_layout()
-plt.show()
+
+
+
