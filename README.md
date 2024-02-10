@@ -37,8 +37,5 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 **License:**
 DeepLearningKit is licensed under the [MIT License](LICENCE).
 
-**Contact:**
-For questions, feedback, or support, please reach out to me via email at dasereno@student.42.fr.
-
 **Acknowledgments:**
-This project wouldn't have been possible without the support and guidance from the deep learning community, bigup to the book : 'Neural Network From Scratch' by Harrison Kinsley and Daniel Kukiela <3 . Let's continue to learn and grow together!
+This project wouldn't have been possible without the support and guidance from the deep learning community, bigup to the book : 'Neural Network From Scratch' by Harrison Kinsley and Daniel Kukiela <3 . Let's continue to learn!
