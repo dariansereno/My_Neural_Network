@@ -16,7 +16,7 @@ class Loss(ABC):
 		data_loss = np.mean(sample_losses) # calcul la moyenne de la loss
 		return data_loss
 
-class Loss_CategoricalCrossEntropy(Loss):
+class CategoricalCrossEntropy(Loss):
 	def forward(self, y_pred, y_true):
 		samples = len(y_pred)
 		y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
@@ -43,7 +43,7 @@ class Loss_CategoricalCrossEntropy(Loss):
 		self.dinputs = -y_true / dvalues
 		self.dinputs = self.dinputs / samples
 	
-class Loss_BinaryCrossEntropy(Loss):
+class BinaryCrossEntropy(Loss):
 	def forward(self, y_pred, y_true):
 		y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
 

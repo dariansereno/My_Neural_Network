@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from loss import Loss_CategoricalCrossEntropy
+from .loss import CategoricalCrossEntropy
 import numpy as np
 
 class Activation(ABC):
@@ -15,7 +15,7 @@ class Activation(ABC):
 	def backward(self, dvalues):
 		pass
 
-class Activation_ReLU(Activation):
+class ReLU(Activation):
 	def forward(self, inputs):
 		self.inputs = inputs
 		self.output = np.maximum(0, inputs)
@@ -23,14 +23,14 @@ class Activation_ReLU(Activation):
 		self.dinputs = dvalues.copy()
 		self.dinputs[self.inputs <= 0] = 0
 
-class Activation_Sigmoid(Activation):
+class Sigmoid(Activation):
 	def forward(self, inputs):
 		self.inputs = inputs
 		self.output = 1/(1 + np.exp(-inputs))
 	def backward(self, dvalues):
 		self.dinputs = dvalues * (1 - self.output) * self.output
 	
-class Activation_Softmax(Activation):
+class Softmax(Activation):
 	def forward(self, inputs):
 		# on prend tout les inputs (matrice de vecteur ex : [[1, 2, 3], [2, 1, 3], [3, 1, 2]])
 		# pour chaque vecteur on soustrais la valeur maximal ex : [[1 - 3, 2 - 3, 3 - 3], [2 - 3, 1 - 3, 3 - 3], [3 - 3, 1 - 3, 2 - 3]]
@@ -49,10 +49,10 @@ class Activation_Softmax(Activation):
 			jacobian_matrix = np.diagflat(single_output) - np.dot(single_output, single_output.T)
 			self.dinputs[index] = np.dot(jacobian_matrix, single_dvalues)
 
-class Activation_Softmax_Loss_CategoricalCrossEntropy(Activation):
+class Softmax_CategoricalCrossEntropy(Activation):
 	def __init__(self):
-		self.activation = Activation_Softmax()
-		self.loss = Loss_CategoricalCrossEntropy()
+		self.activation = Softmax()
+		self.loss = CategoricalCrossEntropy()
 	def forward(self, inputs, y_true):
 		self.activation.forward(inputs)
 		self.output = self.activation.output
