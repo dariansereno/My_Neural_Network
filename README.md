@@ -6,10 +6,10 @@ Welcome to DeepLearningKit, a Python library crafted with a passion for learning
 This release marks the first version of DeepLearningKit, but the journey doesn't end here! I'll be actively working on improving and expanding the library regularly. Stay tuned for updates and new features in future releases.
 
 **Key Features:**
-1. **Modular Architecture:** DeepLearningKit offers a modular architecture allowing users to easily construct neural network models by stacking layers and specifying activation functions.
-2. **Customizable Initialization:** Users can choose from a variety of weight initialization methods such as RandomNormal, Zero, He, Xavier, and LeCun, or define their custom initialization strategies. (Not complete)
+1. **Modular Architecture:** The library offers a modular architecture allowing users to easily construct neural network models by stacking layers and specifying activation functions.
+2. **Customizable Initialization:** You can choose from a variety of weight initialization methods such as RandomNormal, Zero, He, Xavier, and LeCun, or define their custom initialization strategies. (Not complete)
 3. **Optimizers:** The library provides a selection of optimization algorithms including SGD, Adagrad, RMSProp, Adadelta, and Adam, each with adjustable parameters for fine-tuning the training process.
-4. **Loss Functions:** DeepLearningKit supports commonly used loss functions such as Categorical Cross-Entropy and Binary Cross-Entropy.
+4. **Loss Functions:** The library supports commonly used loss functions such as Categorical Cross-Entropy and Binary Cross-Entropy.
 
 **Getting Started:**
 1. **Installation:** Install DeepLearningKit using pip:
