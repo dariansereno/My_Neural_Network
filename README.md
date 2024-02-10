@@ -9,7 +9,7 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 1. **Modular Architecture:** DeepLearningKit offers a modular architecture allowing users to easily construct neural network models by stacking layers and specifying activation functions.
 2. **Customizable Initialization:** Users can choose from a variety of weight initialization methods such as RandomNormal, Zero, He, Xavier, and LeCun, or define their custom initialization strategies. (Not complete)
 3. **Optimizers:** The library provides a selection of optimization algorithms including SGD, Adagrad, RMSProp, Adadelta, and Adam, each with adjustable parameters for fine-tuning the training process.
-4. **Loss Functions:** DeepLearningKit supports commonly used loss functions such as Categorical Cross-Entropy and Binary Cross-Entropy, enabling users to train models for classification and regression tasks.
+4. **Loss Functions:** DeepLearningKit supports commonly used loss functions such as Categorical Cross-Entropy and Binary Cross-Entropy.
 
 **Getting Started:**
 1. **Installation:** Install DeepLearningKit using pip:
@@ -19,14 +19,14 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 
 2. **Usage:**
    ```python
-   	import deeplearningkit as nn
-   	import numpy as np
+    import deeplearningkit as nn
+    import numpy as np
 
-	# Load data
-   	X_train, y_train = load_data()
+ 	# Load data
+    X_train, y_train = load_data()
 
-   	# Define and compile the model
-	model = nn.Model()
+    # Define and compile the model
+    model = nn.Model()
 	model.add(nn.Layer.Dense(train_X.shape[1], 24,  nn.initializer.He(train_X.shape[1])), nn.Activation.ReLU())
 	model.add(nn.Layer.Dense(24, 24,  nn.initializer.He(24)), nn.Activation.ReLU())
 	model.add(nn.Layer.Dense(24, 4,  nn.initializer.He(24)), nn.Activation.Softmax_CategoricalCrossEntropy())
