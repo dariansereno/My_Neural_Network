@@ -5,12 +5,6 @@
 Welcome to DeepLearningKit, a Python library crafted with a passion for learning and a drive to simplify the journey into the depths of neural networks. As my inaugural project in this domain, DeepLearningKit is designed primarily for my educational purposes, aiming to help me to understand and experiment with deep learning concepts.
 This release marks the first version of DeepLearningKit, but the journey doesn't end here! I'll be actively working on improving and expanding the library regularly. Stay tuned for updates and new features in future releases.
 
-**Key Features:**
-1. **Modular Architecture:** The library offers a modular architecture allowing users to easily construct neural network models by stacking layers and specifying activation functions.
-2. **Customizable Initialization:** You can choose from a variety of weight initialization methods such as RandomNormal, Zero, He, Xavier, and LeCun, or define their custom initialization strategies. (Not complete)
-3. **Optimizers:** The library provides a selection of optimization algorithms including SGD, Adagrad, RMSProp, Adadelta, and Adam, each with adjustable parameters for fine-tuning the training process.
-4. **Loss Functions:** The library supports commonly used loss functions such as Categorical Cross-Entropy and Binary Cross-Entropy.
-
 **Getting Started:**
 1. **Installation:** Install DeepLearningKit using pip:
    ```
@@ -39,9 +33,6 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 	X_test, y_test = load_test_data()
 	model.evaluate(X_test, y_test)
    ```
-
-**Contributing:**
-DeepLearningKit is a beginner-friendly project (because I'm a beginner !), and contributions from all skill levels are welcome! Whether you're fixing bugs or improving (the poor) documentation, your contributions are valuable. Feel free to open issues or pull requests on the GitHub repository.
 
 **License:**
 DeepLearningKit is licensed under the [MIT License](LICENCE).
