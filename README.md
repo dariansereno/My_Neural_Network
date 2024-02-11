@@ -6,12 +6,8 @@ Welcome to DeepLearningKit, a Python library crafted with a passion for learning
 This release marks the first version of DeepLearningKit, but the journey doesn't end here! I'll be actively working on improving and expanding the library regularly. Stay tuned for updates and new features in future releases.
 
 **Getting Started:**
-1. **Installation:**
-   ```
-   pip install deeplearningkit
-   ```
 
-2. **Usage:**
+1. **Usage:**
    ```python # Import necessary libraries
 	import deeplearningkit as nn
 	import numpy as np
