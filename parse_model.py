@@ -6,7 +6,6 @@ from deeplearningkit.model import Model
 import deeplearningkit.activation as Activation
 import deeplearningkit.initializer as Initializer
 import pandas as pd
-from preprocess import get_data
 
 def extract_csv(filepath: str):
   return pd.read_csv(filepath, header=None)
@@ -19,8 +18,7 @@ def get_model_json(filename):
 class ModelConfigurationError(Exception):
 	pass
 
-
-def parse_model_json(filename: str) -> dict:
+def parse_model_json(filename: str, preprocess_func = None) -> dict:
 	try:
 		json_model: dict = get_model_json(filename)
 		
@@ -30,7 +28,7 @@ def parse_model_json(filename: str) -> dict:
 			'epochs': validate_epochs,
 			'batch_size': validate_batch_size,
 			'optimizer': validate_optimizer,
-			'data': validate_csv_data,
+			#'data': validate_csv_data,
 		}
 		
 		for field, validator in field_validators.items():
@@ -54,8 +52,14 @@ def parse_model_json(filename: str) -> dict:
 		optimizer = Optimizer.optimizer(json_model['optimizer']['type'], json_model['optimizer']['params'])
 		epochs = int(json_model['epochs'])
 		batch_size = int(json_model['batch_size'])
-		data = extract_csv(json_model['data'])
-
+		try:
+			validate_csv_data(json_model['data'])
+			if (preprocess_func):
+				data = preprocess_func(extract_csv(json_model['data']))
+			else:
+				raise ModelConfigurationError("No preprocess function given.")
+		except:
+			data = None
 		return {"loss": loss, "layers": layers, "activations": activations, "optimizer": optimizer, "epochs": epochs, "batch_size": batch_size, "data": data}
 	
 	except ModelConfigurationError as e:
@@ -63,10 +67,20 @@ def parse_model_json(filename: str) -> dict:
 		exit(1)
 #	{"type": "Dense", "units": 24, "activation": "ReLU", "weights_initializer": "heUniform"},
 
-def compile_and_fit_parsed_model(model_data: dict, preprocess_func, display=True, plot=True)-> Model:
+def compile_and_fit_parsed_model(model_data: dict, preprocess_func = None, data: tuple = None, display=True, plot=True)-> Model:
 	model = Model()
 
-	(train_X, test_X), (train_Y, test_Y) = preprocess_func(model_data["data"])
+	if model_data['data'] == None and (isinstance(data, tuple) == False or data == None) :
+		raise ValueError("No data given")
+	elif data != None:
+		(train_X, train_Y), (test_X, test_Y) = data
+	elif model_data['data'] != None and data == None:
+		if (preprocess_func == None):
+			raise ValueError("Preprocessing function not provided.")
+		(train_X, train_Y), (test_X, test_Y) = preprocess_func(model_data["data"])
+	else:
+		raise ValueError("No data given")
+
 	model_data["layers"][0].updateInputs(train_X.shape[1])
 	for layer, activation in zip(model_data["layers"], model_data["activations"]):
 		model.add(layer, activation)
@@ -74,10 +88,20 @@ def compile_and_fit_parsed_model(model_data: dict, preprocess_func, display=True
 	model.fit(train_X, train_Y, model_data["batch_size"], epochs=model_data["epochs"], display=display, plot=plot)
 	return model
 
-def compile_fit_evaluate_parsed_model(model_data: dict, preprocess_func, display=True, plot=True)-> Model:
+def compile_fit_evaluate_parsed_model(model_data: dict, preprocess_func,  data: tuple = None, display=True, plot=True)-> Model:
 	model = Model()
 
-	(train_X, test_X), (train_Y, test_Y) = preprocess_func(model_data["data"])
+	if model_data['data'] == None and (isinstance(data, tuple) == False or data == None) :
+		raise ValueError("No data given")
+	elif data != None:
+		(train_X, test_X), (train_Y, test_Y) = data
+	elif model_data['data'] != None and data == None:
+		if (preprocess_func == None):
+			raise ValueError("Preprocessing function not provided.")
+		(train_X, train_Y), (test_X, test_Y) = preprocess_func(model_data["data"])
+	else:
+		raise ValueError("No data given")
+
 	model_data["layers"][0].updateInputs(train_X.shape[1])
 	for layer, activation in zip(model_data["layers"], model_data["activations"]):
 		model.add(layer, activation)
@@ -134,8 +158,9 @@ def validate_optimizer(value):
 		raise ModelConfigurationError("No type in optimizer field")
 	if 'params' not in value:
 		raise ModelConfigurationError("No params in optimizer field")
-	for param in value["params"]:
+	for param in value["params"].values():
 		try:
+			print(param)
 			int(param)
 		except Exception as e:
 			raise ModelConfigurationError("Optimizer params not a number")

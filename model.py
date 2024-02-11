@@ -25,6 +25,7 @@ class Model:
 	def predict(self, values):
 		if isinstance(self.loss, Loss.BinaryCrossEntropy):
 			predictions = (values > 0.5) * 1
+			predictions =[[np.sum(pred) / len(pred)] for pred in predictions]
 		if isinstance(self.loss, Loss.CategoricalCrossEntropy):
 			predictions = np.argmax(values, axis=1)
 		return predictions
@@ -144,7 +145,7 @@ class Model:
 		accuracy = np.mean(predictions == y)
 
 		print(f'accuracy: {accuracy:.3f}')
-		true_table = np.array([1 if pred == real else 0 for pred, real in zip(predictions, y)]).reshape(1, -1)
+		true_table = np.array([1 if  pred == real else 0 for pred, real in zip(predictions, y)]).reshape(1, -1)
 		print("true table : ", true_table)
 		return {"prediction": predictions, "accuracy": accuracy}
 		#return {"predictions": predictions, "accuracy": accuracy, "loss": loss, "true_table": true_table}

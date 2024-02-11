@@ -15,7 +15,7 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
    ```python # Import necessary libraries
 	import deeplearningkit as nn
 	import numpy as np
-	from preprocess import get_data, create_data
+	from preprocess import preprocess_binary_output_data, create_data
 
 	# Load and create synthetic data (not in the kit)
 	(train_X, train_Y), (test_X, test_Y) = create_data(100, 2)
@@ -33,8 +33,8 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 	# Evaluate the trained model
 	model.evaluate(test_X, test_Y)
 
-	# Alternatively, load data directly from a CSV file using a preprocessing function (not in the kit)
-	(train_X, test_X), (train_Y, test_Y) = get_data("data.csv")
+	# Alternatively, load data directly from a CSV file using a preprocessing function (not yet in the kit)
+	(train_X, test_X), (train_Y, test_Y) = preprocess_binary_output_data("data.csv")
 
 	# Define and compile the model using a simpler function call
 	model = nn.Model()
@@ -53,12 +53,12 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
 	model_data = nn.parse_model_json("model.json")
 
 	# Compile and fit the model using parsed data and a specified data preprocessing function
-	model: nn.Model = nn.compile_and_fit_parsed_model(model_data, get_data, display=True, plot=False)
+	model: nn.Model = nn.compile_and_fit_parsed_model(model_data, preprocess_binary_output_data, display=True, plot=False)
 	model.evaluate(test_X, test_Y)
 
 	# Or load, compile, fit, and evaluate directly from a JSON configuration
 	model_data = nn.parse_model_json("model.json")
-	model: nn.Model = nn.compile_fit_evaluate_parsed_model(model_data, get_data, display=True, plot=False)
+	model: nn.Model = nn.compile_fit_evaluate_parsed_model(model_data, preprocess_binary_output_data, display=True, plot=False)
 
 	# Example of JSON configuration for a neural network model
 	# {

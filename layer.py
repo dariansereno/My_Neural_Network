@@ -35,6 +35,7 @@ class Layer(ABC):
 	def updateInputs(self, n_inputs):
 		self.n_inputs = n_inputs
 		self.shape = (n_inputs, self.n_neurons)
+		print("Input updaaaated: ", n_inputs)
 		self.initialize_weights()
 
 	@abstractmethod
