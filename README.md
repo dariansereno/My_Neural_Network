@@ -12,7 +12,7 @@ This release marks the first version of DeepLearningKit, but the journey doesn't
    ```
 
 2. **Usage:**
-   ```# Import necessary libraries
+   ```python # Import necessary libraries
 	import deeplearningkit as nn
 	import numpy as np
 	from preprocess import get_data, create_data
