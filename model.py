@@ -1,7 +1,7 @@
-from . import layer as Layer
-from . import activation as Activation
-from . import loss as Loss
-from . import optimizer as Optimizer
+import deeplearningkit.layer as Layer
+import deeplearningkit.activation as Activation
+import deeplearningkit.loss as Loss
+import deeplearningkit.optimizer as Optimizer
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -48,6 +48,8 @@ class Model:
 				y = y[indices]
 			layer: Layer
 			activation: Activation
+			epoch_accuracies = []
+			epoch_losses = []
 			
 			for step in range(steps):
 				if (batch_size):
@@ -74,6 +76,7 @@ class Model:
 
 				predictions = self.predict(feed)
 				accuracy = np.mean(predictions==batch_Y)
+				epoch_accuracies.append(accuracy)
 
 				if loss_activation == None:
 					loss = self.loss.calculate(feed, batch_Y)
@@ -84,8 +87,7 @@ class Model:
 					activation.backward(feed, batch_Y)
 					feed = activation.dinputs
 
-				self.losses.append(loss)
-				self.accuracies.append(accuracy)
+				epoch_losses.append(loss)
 				if (display):
 					if not epoch % 100:
 						if batch_size:
@@ -109,6 +111,10 @@ class Model:
 				for layer in self.layers:
 					self.optimizer.update_params(layer)
 				self.optimizer.post_update_params()
+			avg_accuracy = np.mean(epoch_accuracies)
+			avg_loss = np.mean(epoch_losses)
+			self.accuracies.append(avg_accuracy)
+			self.losses.append(avg_loss)
 
 		if (plot):
 			self.plot(epochs)
@@ -138,8 +144,8 @@ class Model:
 		accuracy = np.mean(predictions == y)
 
 		print(f'accuracy: {accuracy:.3f}')
-		#true_table = np.array([1 if pred == real else 0 for pred, real in zip(predictions, y)]).reshape(1, -1)
-		#print("true table : ", true_table)
+		true_table = np.array([1 if pred == real else 0 for pred, real in zip(predictions, y)]).reshape(1, -1)
+		print("true table : ", true_table)
 		return {"prediction": predictions, "accuracy": accuracy}
 		#return {"predictions": predictions, "accuracy": accuracy, "loss": loss, "true_table": true_table}
 	
@@ -165,7 +171,4 @@ class Model:
 		plt.tight_layout()
 		plt.show()
 
-
-
-
-
+__all__ = ['Model']

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from .loss import CategoricalCrossEntropy
+from deeplearningkit.loss import CategoricalCrossEntropy
 import numpy as np
 
 class Activation(ABC):
@@ -65,3 +65,17 @@ class Softmax_CategoricalCrossEntropy(Activation):
 		self.dinputs = dvalues.copy()
 		self.dinputs[range(samples), y_true] -= 1
 		self.dinputs = self.dinputs / samples
+
+def activation(activation:str)->Activation:
+	activation = activation.lower()
+	if (activation == 'relu'):
+		return ReLU()
+	elif (activation == 'sigmoid'):
+		return Sigmoid()
+	elif activation == "softmax":
+		return Softmax()
+	elif activation == "softmax_categoricalcrossentropy":
+		return Softmax_CategoricalCrossEntropy()
+	raise ValueError(f"ActivationError: Unknown activation type :'{activation}'")
+
+__all__ = ['Activation', 'ReLU', 'Sigmoid', 'Softmax', 'Softmax_CategoricalCrossEntropy', 'activation']

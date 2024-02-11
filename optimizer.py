@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from .layer import Layer
+from deeplearningkit.layer import Layer
 
 class Optimizer(ABC):
 	def __init__(self, learning_rate=1.0, decay=.0):
@@ -21,9 +21,10 @@ class Optimizer(ABC):
 		pass
 
 class SGD(Optimizer):
-	def __init__(self, learning_rate=1.0, decay=0.0, momentum=.0):
+	def __init__(self, learning_rate=1.0, decay=0.0, momentum=.0, **kwargs):
 		super().__init__(learning_rate, decay)
 		self.momentum = momentum
+
 	def pre_update_params(self):
 		if (self.decay):
 			self.current_learning_rate = self.learning_rate * (1 / (1 + self.decay * self.iterations))
@@ -50,7 +51,7 @@ class SGD(Optimizer):
 		self.iterations += 1
 
 class Adagrad(Optimizer):
-	def __init__(self, learning_rate=1.0, decay=.0, epsilon=1e-7):
+	def __init__(self, learning_rate=1.0, decay=.0, epsilon=1e-7, **kwargs):
 		super().__init__(learning_rate, decay)
 		self.epsilon = epsilon
 
@@ -72,10 +73,11 @@ class Adagrad(Optimizer):
 		self.iterations += 1
 
 class RMSProp(Optimizer):
-	def __init__(self, learning_rate=0.001, decay=.0, epsilon=1e-7, rho=0.9):
+	def __init__(self, learning_rate=0.001, decay=.0, epsilon=1e-7, rho=0.9, **kwargs):
 		super().__init__(learning_rate, decay)
 		self.epsilon = epsilon
 		self.rho = rho
+
 
 	def pre_update_params(self):
 		if (self.decay):
@@ -100,9 +102,10 @@ class RMSProp(Optimizer):
 
 
 class Adadelta(Optimizer):
-	def __init__(self, epsilon=1e-7, rho=0.9):
+	def __init__(self, epsilon=1e-7, rho=0.9 ,**kwargs):
 		self.epsilon = epsilon
 		self.rho = rho
+
 
 	def pre_update_params(self):
 		pass
@@ -118,7 +121,6 @@ class Adadelta(Optimizer):
 		layer.cached_biases = self.rho * layer.cached_biases + (1 - self.rho) * (layer.dbiases ** 2)
 		#rho regulate the impact of the cache and the impact of dweigths. more rho near from 1, less dweights have impact
 		# more rho near from 0 and less cache have impact
-
 		weight_update = layer.dweights * np.sqrt(((layer.cached_weights_prev + self.epsilon)) / (layer.cached_weights + self.epsilon))
 		biases_update = layer.dbiases * np.sqrt(( (layer.cached_biases_prev + self.epsilon)) / (layer.cached_biases + self.epsilon))
 		# we update the weight by the product of gradient and the sqrt of the delta cached
@@ -130,7 +132,7 @@ class Adadelta(Optimizer):
 		pass
 
 class Adam(Optimizer):
-	def __init__(self, learning_rate=0.001, decay=.0, epsilon=1e-7, beta1=0.9, beta2=0.999):
+	def __init__(self, learning_rate=0.001, decay=.0, epsilon=1e-7, beta1=0.9, beta2=0.999, **kwargs):
 		self.learning_rate = learning_rate
 		self.current_learning_rate = learning_rate
 		self.decay = decay
@@ -182,3 +184,23 @@ class Adam(Optimizer):
 
 	def post_update_params(self):
 		self.iterations += 1
+
+def optimizer(optimizer:str,*args, **kwargs)->Optimizer:
+	optimizer = optimizer.lower()
+	if args and isinstance(args[-1], dict):
+		kwargs.update(args[-1])
+		args = args[:-1] 
+
+	if (optimizer == "sgd"):
+		return SGD(**kwargs)
+	if (optimizer == "adagrad"):
+		return Adagrad(**kwargs)
+	if (optimizer == "rmsprop"):
+		return RMSProp(**kwargs)
+	if (optimizer == 'adadelta'):
+		return Adadelta( **kwargs)
+	if (optimizer == "adam"):
+		return Adam(**kwargs)
+	return None
+
+__all__ = ['Optimizer', 'SGD', 'Adagrad', 'RMSProp', 'Adadelta', 'Adam', 'optimizer']

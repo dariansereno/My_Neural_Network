@@ -58,3 +58,13 @@ class BinaryCrossEntropy(Loss):
 		clipped_dvalues = np.clip(dvalues, 1e-7, 1 - 1e-7)
 		self.dinputs = -(y_true / clipped_dvalues - (1 - y_true) / (1 - clipped_dvalues)) / outputs
 		self.dinputs = self.dinputs / samples
+
+def loss(loss:str) -> Loss:
+	loss = loss.lower()
+	if (loss == 'categoricalcrossentropy'):
+		return CategoricalCrossEntropy()
+	elif (loss == 'binarycrossentropy'):
+		return BinaryCrossEntropy()
+	raise ValueError(f"LossError: Unknown loss type :'{loss}'")
+
+__all__ = ['Loss', 'CategoricalCrossEntropy', 'BinaryCrossEntropy', 'loss']

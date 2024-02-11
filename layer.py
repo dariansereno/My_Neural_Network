@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from .activation import Activation
-from.initializer import Initializer
+from deeplearningkit.activation import Activation
+from deeplearningkit.initializer import Initializer
 import numpy as np
 
 class Layer(ABC):
@@ -27,6 +27,16 @@ class Layer(ABC):
 			self.weights = 0.10 * np.random.randn(self.n_inputs, self.n_neurons)
 		self.biases = np.zeros((1, self.n_neurons))
 
+	def updateNeurons(self, n_neurons):
+		self.n_neurons = n_neurons
+		self.shape = (self.n_inputs, n_neurons)
+		self.initialize_weights()
+
+	def updateInputs(self, n_inputs):
+		self.n_inputs = n_inputs
+		self.shape = (n_inputs, self.n_neurons)
+		self.initialize_weights()
+
 	@abstractmethod
 	def forward(self, inputs):
 		pass
@@ -46,4 +56,11 @@ class Dense(Layer):
 		self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
 
 
-	
+def layer(layer_type: str, *args) -> Layer:
+	layer_type = layer_type.lower()
+	if layer_type == "dense":
+		return Dense(*args)
+	else:
+		raise ValueError(f"LayerError: Unknown layer type: {layer_type}")
+
+__all__ = ['Layer', 'Dense', 'layer']
