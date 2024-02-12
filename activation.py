@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from deeplearningkit.loss import CategoricalCrossEntropy
+from .loss import CategoricalCrossEntropy
 import numpy as np
 
 class Activation(ABC):

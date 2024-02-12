@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from .layer import Layer
 
 class Loss(ABC):
 	dinputs: np.ndarray
@@ -15,11 +16,24 @@ class Loss(ABC):
 		sample_losses = self.forward(output, y)
 		data_loss = np.mean(sample_losses) # calcul la moyenne de la loss
 		return data_loss
+	
+	def regularization_loss(self, layer: Layer):
+		loss = 0
+
+		if (layer.weight_regularizer_l1):
+			loss += layer.weight_regularizer_l1 * np.sum(np.abs(layer.weights))
+		if (layer.bias_regularizer_l1):
+			loss += layer.bias_regularizer_l1 * np.sum(np.abs(layer.biases))
+		if (layer.weight_regularizer_l1):
+			loss += layer.weight_regularizer_l1 * np.sum(np.square(layer.weights))
+		if (layer.bias_regularizer_l2):
+			loss += layer.bias_regularizer_l2 * np.sum(np.square(layer.biases))
 
 class CategoricalCrossEntropy(Loss):
-	def forward(self, y_pred, y_true):
+	def forward(self, y_pred, y_true: np.ndarray):
 		samples = len(y_pred)
 		y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
+
 
 		if len(y_true.shape) == 1: # quand on reçoit un vecteur de label : [0, 2, 0, 1] -> la classe 0, 2, 0, 1 sont vrai.
 			# donc on cherche directement a la case des predictions les valeurs

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from deeplearningkit.activation import Activation
-from deeplearningkit.initializer import Initializer
+from .initializer import Initializer
 import numpy as np
 
 class Layer(ABC):
@@ -12,13 +11,16 @@ class Layer(ABC):
 	dinputs: np.ndarray
 	dbiases: np.ndarray
 
-	def __init__(self, n_inputs, n_neurons, initializer: Initializer=None):
+	def __init__(self, n_inputs, n_neurons, initializer: Initializer=None, weight_regularizer_l1 = 0, bias_regularizer_l1 = 0, weight_regularizer_l2 = 0, bias_regularizer_l2 = 0):
 		self.n_inputs = n_inputs
 		self.n_neurons = n_neurons
 		self.shape = (n_inputs, n_neurons)
 		self.initializer = initializer
 		self.initialize_weights()
-		# exemple : On a 2 inputs, et 3 neurones : weights : [[2.1, 0.3, 0.56], [1.32, 0.56, 3.21]], biais : [0.32, 0.67, 1.56]
+		self.weight_regularizer_l1 = weight_regularizer_l1
+		self.weight_regularizer_l2 = weight_regularizer_l2
+		self.bias_regularizer_l1 = bias_regularizer_l1
+		self.bias_regularizer_l2 = bias_regularizer_l2
 
 	def initialize_weights(self):
 		if self.initializer is not None:
@@ -35,7 +37,6 @@ class Layer(ABC):
 	def updateInputs(self, n_inputs):
 		self.n_inputs = n_inputs
 		self.shape = (n_inputs, self.n_neurons)
-		print("Input updaaaated: ", n_inputs)
 		self.initialize_weights()
 
 	@abstractmethod

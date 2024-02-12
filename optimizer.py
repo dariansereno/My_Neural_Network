@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from deeplearningkit.layer import Layer
+from .layer import Layer
 
 class Optimizer(ABC):
 	def __init__(self, learning_rate=1.0, decay=.0):

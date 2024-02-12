@@ -1,10 +1,10 @@
 import json
-import deeplearningkit.loss as Loss
-import deeplearningkit.layer as Layer
-import deeplearningkit.optimizer as Optimizer
-from deeplearningkit.model import Model
-import deeplearningkit.activation as Activation
-import deeplearningkit.initializer as Initializer
+from . import loss as Loss
+from . import layer as Layer
+from . import optimizer as Optimizer
+from .model import Model
+from . import activation as Activation
+from . import initializer as Initializer
 import pandas as pd
 
 def extract_csv(filepath: str):
@@ -80,7 +80,6 @@ def compile_and_fit_parsed_model(model_data: dict, preprocess_func = None, data:
 		(train_X, train_Y), (test_X, test_Y) = preprocess_func(model_data["data"])
 	else:
 		raise ValueError("No data given")
-
 	model_data["layers"][0].updateInputs(train_X.shape[1])
 	for layer, activation in zip(model_data["layers"], model_data["activations"]):
 		model.add(layer, activation)
@@ -160,7 +159,6 @@ def validate_optimizer(value):
 		raise ModelConfigurationError("No params in optimizer field")
 	for param in value["params"].values():
 		try:
-			print(param)
 			int(param)
 		except Exception as e:
 			raise ModelConfigurationError("Optimizer params not a number")

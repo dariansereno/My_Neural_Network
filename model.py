@@ -1,7 +1,6 @@
-import deeplearningkit.layer as Layer
-import deeplearningkit.activation as Activation
-import deeplearningkit.loss as Loss
-import deeplearningkit.optimizer as Optimizer
+from . import layer as Layer
+from . import activation as Activation
+from . import loss as Loss
 import numpy as np
 import matplotlib.pyplot as plt
 
