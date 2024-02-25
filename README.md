@@ -2,8 +2,7 @@
 
 **Description:**
 
-Welcome to DeepLearningKit, a Python library crafted with a passion for learning and a drive to simplify the journey into the depths of neural networks. As my inaugural project in this domain, DeepLearningKit is designed primarily for my educational purposes, aiming to help me to understand and experiment with deep learning concepts.
-This release marks the first version of DeepLearningKit, but the journey doesn't end here! I'll be actively working on improving and expanding the library regularly. Stay tuned for updates and new features in future releases.
+A little Deep learning python library for learning purpose only.
 
 **Getting Started:**
 
